@@ -19,6 +19,7 @@ dependencies:
   csv: ^6.0.0
   universal_html: ^2.3.0
   confetti: ^0.8.0
+  google_mobile_ads: ^5.1.0
 
 dev_dependencies:
   flutter_test:

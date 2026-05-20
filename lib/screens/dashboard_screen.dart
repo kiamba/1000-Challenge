@@ -10,6 +10,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:confetti/confetti.dart'; 
 import '../services/database_service.dart';
 import '../models/tracked_action.model.dart';
+import '../widgets/ad_banner_widget.dart'; // 🎯 MOUNT THE REUSABLE GOOGLE AD COMPONENT
 
 class DashboardScreen extends StatefulWidget {
   const DashboardScreen({super.key});
@@ -582,6 +583,12 @@ class _DashboardScreenState extends State<DashboardScreen> {
                 foregroundColor: Colors.white,
                 child: const Icon(Icons.add),
               ),
+              
+              // 🎯 SURGICAL AD INTEGRATION BLOCK
+              // Houses your dynamic 320x50 AdMob processing layout directly beneath your scroll feed
+              bottomNavigationBar: const SafeArea(
+                child: AdBannerWidget(),
+              ),
             ),
             ConfettiWidget(
               confettiController: _confettiController,
@@ -645,6 +652,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
           margin: const EdgeInsets.symmetric(vertical: 6),
           child: ExpansionTile(
             leading: Chip(
+              key: ValueKey('project_chip_${item.id ?? index}'),
               label: Text(item.project, style: const TextStyle(fontSize: 12)),
               backgroundColor: item.project == 'Job' ? Colors.teal.shade50 : Colors.orange.shade50,
               padding: EdgeInsets.zero,

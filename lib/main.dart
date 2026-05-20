@@ -1,3 +1,4 @@
+import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -23,6 +24,14 @@ void main() async {
     }
   } catch (e) {
     debugPrint("Firebase intercepted native initialization safely: $e");
+  }
+
+  // 🎯 GOOGLE ADMOB INITIALIZATION ENGINE
+  try {
+    await MobileAds.instance.initialize();
+    debugPrint("Google Mobile Ads SDK initialized successfully.");
+  } catch (e) {
+    debugPrint("Google Mobile Ads initialization deferred safely: $e");
   }
 
   // 🛰️ OFFLINE STORAGE PROVISIONING
