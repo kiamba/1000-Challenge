@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "53921512304",
+    "project_id": "challenge-a80ee",
+    "storage_bucket": "challenge-a80ee.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:53921512304:android:a8cbb70994c75367abedb5",
+        "android_client_info": {
+          "package_name": "com.techisa.challenge"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB0lv2kqfeJlpM9Rn2Q45UEJhcqDvvcomw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
