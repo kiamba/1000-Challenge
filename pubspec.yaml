@@ -5,19 +5,18 @@ publish_to: 'none'
 version: 1.0.0+1
 
 environment:
-  sdk: '>=3.0.0 <4.0.0' # 💡 FIXED: Unified SDK constraint mapping to prevent package rejection
+  sdk: '>=3.0.0 <4.0.0'
 
 dependencies:
   flutter:
     sdk: flutter
   flutter_local_notifications: ^17.0.0
   timezone: ^0.9.4
-
   cupertino_icons: ^1.0.8
   firebase_core: ^4.9.0
   cloud_firestore: ^6.4.1
   firebase_auth: ^6.5.1
-  csv: ^6.0.0 # 💡 FIXED: Downgraded to the correct stable structural version
+  csv: ^6.0.0
   universal_html: ^2.3.0
   confetti: ^0.8.0
 
@@ -25,6 +24,14 @@ dev_dependencies:
   flutter_test:
     sdk: flutter
   flutter_lints: ^4.0.0
+  flutter_launcher_icons: ^0.13.1
 
 flutter:
   uses-material-design: true
+
+# 🎯 CONFIGURATION PLATFORM MATRIX FOR GENERATING APP ICONS
+flutter_launcher_icons:
+  android: "launcher_icon"
+  ios: true
+  image_path: "assets/app_logo.png"
+  min_sdk_android: 21
