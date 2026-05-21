@@ -14,7 +14,7 @@ class _AdBannerWidgetState extends State<AdBannerWidget> {
 
   // ⚠️ CRITICAL: This is Google's official Android Test Banner Unit ID.
   // Always test with this ID. Never use your live production ID while coding!
-  final String _testAdUnitId = 'ca-app-pub-3940256099942544/6300978111';
+  final String _testAdUnitId = 'ca-app-pub-4908089317133503/9278669341';
 
   @override
   void initState() {
