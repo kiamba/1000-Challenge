@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:google_mobile_ads/google_mobile_ads.dart'; // Added SDK Import
 import '../services/database_service.dart';
 import 'dashboard_screen.dart';
 
@@ -23,6 +24,70 @@ class _LoginScreenState extends State<LoginScreen> {
   bool _obscurePassword = true; 
   String _infoMessage = "";
   Color _messageColor = Colors.red;
+
+  // --- ADMOB INTEGRATION VARIABLES ---
+  InterstitialAd? _transitionAd;
+  bool _isAdLoaded = false;
+
+  // ⚠️ GOOGLE TEST UNIT ID (Safe for local development)
+  // Swap this string with your real Ad Unit ID right before deploying the update.
+  final String _adUnitId = 'ca-app-pub-4908089317133503/7609660181';
+
+  @override
+  void initState() {
+    super.initState();
+    _loadTransitionAd(); // Silently preload the ad when screen starts
+  }
+
+  // Preload function for interstitial ads
+  void _loadTransitionAd() {
+    InterstitialAd.load(
+      adUnitId: _adUnitId,
+      request: const AdRequest(),
+      adLoadCallback: InterstitialAdLoadCallback(
+        onAdLoaded: (ad) {
+          setState(() {
+            _transitionAd = ad;
+            _isAdLoaded = true;
+          });
+        },
+        onAdFailedToLoad: (LoadAdError error) {
+          debugPrint('InterstitialAd failed to load: $error');
+          _isAdLoaded = false;
+        },
+      ),
+    );
+  }
+
+  // Display the ad and execute the UI toggle right after dismissal
+  void _showAdAndToggleMode() {
+    if (_isAdLoaded && _transitionAd != null) {
+      _transitionAd!.fullScreenContentCallback = FullScreenContentCallback(
+        onAdDismissedFullScreenContent: (ad) {
+          ad.dispose();
+          _toggleAuthMode();
+          _loadTransitionAd(); // Re-load a fresh ad for next time
+        },
+        onAdFailedToShowFullScreenContent: (ad, error) {
+          ad.dispose();
+          _toggleAuthMode();
+          _loadTransitionAd();
+        },
+      );
+      _transitionAd!.show();
+    } else {
+      // Direct fallback option if ad hasn't fully cached in time
+      _toggleAuthMode();
+    }
+  }
+
+  // Internal helper to perform the UI flip state cleanups
+  void _toggleAuthMode() {
+    setState(() {
+      _isLoginMode = !_isLoginMode;
+      _infoMessage = "";
+    });
+  }
 
   void _submitAuth() async {
     setState(() {
@@ -108,6 +173,7 @@ class _LoginScreenState extends State<LoginScreen> {
     _emailController.dispose();
     _passwordController.dispose();
     _phoneController.dispose();
+    _transitionAd?.dispose(); // Added to safely clear ad memory allocation leaks
     super.dispose();
   }
 
@@ -134,7 +200,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   children: [
                     Icon(
                       _isLoginMode ? Icons.lock_person : Icons.person_add,
-                      size: deviceWidth > 360 ? 64 : 48, // Shrinks gracefully on small displays
+                      size: deviceWidth > 360 ? 64 : 48, 
                       color: Colors.blue.shade800,
                     ),
                     const SizedBox(height: 16),
@@ -234,10 +300,8 @@ class _LoginScreenState extends State<LoginScreen> {
                     const SizedBox(height: 16),
                     
                     TextButton(
-                      onPressed: () => setState(() {
-                        _isLoginMode = !_isLoginMode;
-                        _infoMessage = "";
-                      }),
+                      // INTERCEPT BUTTON ACTION TO DEPLOY THE AD INTERSTITIAL
+                      onPressed: _isLoading ? null : _showAdAndToggleMode,
                       child: Text(
                         _isLoginMode ? "Don't have an account? Register here" : "Already have an account? Sign In",
                         style: TextStyle(color: Colors.blue.shade900, fontWeight: FontWeight.w600),

@@ -9,6 +9,7 @@ import 'firebase_options.dart';
 import 'screens/login_screen.dart';
 import 'screens/dashboard_screen.dart';
 import 'services/notification_service.dart';
+import 'app_open_ad_manager.dart'; // Ensure your ad manager is imported correctly
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -56,8 +57,43 @@ void main() async {
   runApp(const MyApp());
 }
 
-class MyApp extends StatelessWidget {
+class MyApp extends StatefulWidget {
   const MyApp({super.key});
+
+  @override
+  State<MyApp> createState() => _MyAppState();
+}
+
+// Added WidgetsBindingObserver to manage App Open lifecycle interruptions
+class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
+  late AppOpenAdManager _appOpenAdManager;
+
+  @override
+  void initState() {
+    super.initState();
+    // 🛠️ Hook into the application's underlying lifecycle observer loop
+    WidgetsBinding.instance.addObserver(this);
+    
+    // Instantiate your manager and load the initial ad instance in memory cache
+    _appOpenAdManager = AppOpenAdManager()..loadAd();
+  }
+
+  @override
+  void dispose() {
+    // 🛠️ Safely tear down lifecycle hooks to avoid lingering memory profile leaks
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    super.didChangeAppLifecycleState(state);
+    
+    // 🔔 INTERCEPT FORWARD RESUME: Trigger the ad whenever users re-enter the app
+    if (state == AppLifecycleState.resumed) {
+      _appOpenAdManager.showAdIfAvailable();
+    }
+  }
 
   @override
   Widget build(BuildContext context) { 
